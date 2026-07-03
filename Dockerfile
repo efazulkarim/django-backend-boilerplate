@@ -1,5 +1,5 @@
 # Multi-stage build for production
-FROM python:3.12-slim as builder
+FROM python:3.12-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -12,9 +12,17 @@ WORKDIR /app
 # Install uv for fast dependency management
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Copy requirements and install dependencies
-COPY pyproject.toml ./
-RUN uv sync --frozen
+# Copy project metadata and lock file
+COPY pyproject.toml uv.lock ./
+
+# Copy source packages needed by hatch build
+COPY apps/ apps/
+COPY config/ config/
+COPY temporal_app/ temporal_app/
+COPY manage.py ./
+
+# Install dependencies (production only)
+RUN uv sync --frozen --no-dev
 
 # Production stage
 FROM python:3.12-slim

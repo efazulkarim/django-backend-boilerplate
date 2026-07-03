@@ -54,8 +54,8 @@ pytest.ini
 requirements-dev.txt
 docker-compose.yml
 
-# Temporal (runs separately)
-temporal_app/
+# Temporal worker runs separately, but source is needed for hatch build
+# temporal_app/
 
 # CI
 .github/

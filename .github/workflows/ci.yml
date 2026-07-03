@@ -88,8 +88,7 @@ jobs:
         run: |
           docker run -d --name test-api -p 8000:8000 \
             -e SECRET_KEY=test-secret \
-            -e DEBUG=False \
-            -e DATABASE_URL=sqlite:///tmp/db.sqlite3 \
+            -e DJANGO_SETTINGS_MODULE=config.settings.test \
             my-api-project:${{ github.sha }}
           sleep 10
           curl -f http://localhost:8000/health/ || exit 1
