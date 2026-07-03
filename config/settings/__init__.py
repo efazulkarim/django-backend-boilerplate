@@ -6,8 +6,8 @@ import sys
 env = os.environ.get('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
 
 if 'test' in sys.argv:
-    from .test import *
+    from .test import *  # noqa: F403
 elif 'prod' in env:
-    from .prod import *
+    from .prod import *  # noqa: F403
 else:
-    from .dev import *
+    from .dev import *  # noqa: F403

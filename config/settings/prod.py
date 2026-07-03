@@ -2,7 +2,7 @@
 """Production settings."""
 import os
 
-from .base import *
+from .base import *  # noqa: F403,F401
 
 # Override for production
 DEBUG = False
@@ -24,7 +24,7 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME', 'us-east-1')
 
 # Production database
-DATABASES['default'].update({
+DATABASES['default'].update({  # noqa: F405
     'NAME': os.environ.get('DB_NAME'),
     'USER': os.environ.get('DB_USER'),
     'PASSWORD': os.environ.get('DB_PASSWORD'),
