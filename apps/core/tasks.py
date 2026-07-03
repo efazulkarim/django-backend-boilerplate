@@ -45,7 +45,7 @@ def send_notification_email(self, user_id: int, subject: str, body: str):
             'send_notification_retry',
             extra={'task_id': self.request.id, 'user_id': user_id, 'error': str(exc)},
         )
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc) from None
 
 
 @shared_task

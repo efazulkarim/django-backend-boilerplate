@@ -1,6 +1,6 @@
 # pylint: disable=wildcard-import,unused-wildcard-import
 """Development settings."""
-from .base import *  # noqa: F403,F401
+from .base import *  # noqa: F403
 
 # Override for development
 DEBUG = True
