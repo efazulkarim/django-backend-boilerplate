@@ -1,4 +1,5 @@
 """Abstract base models for reuse across all apps."""
+
 from django.db import models
 
 
@@ -10,7 +11,7 @@ class TimestampedModel(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 class SoftDeleteManager(models.Manager):  # pylint: disable=too-few-public-methods
@@ -40,7 +41,7 @@ class SoftDeleteModel(TimestampedModel):
     def delete(self, using=None, keep_parents=False):
         """Soft-delete: mark as deleted, don't remove row."""
         self.is_deleted = True
-        self.save(update_fields=['is_deleted', 'updated_at'])
+        self.save(update_fields=["is_deleted", "updated_at"])
 
     def hard_delete(self, using=None, keep_parents=False):
         """Permanently remove the row from the database."""
@@ -49,4 +50,4 @@ class SoftDeleteModel(TimestampedModel):
     def restore(self):
         """Restore a soft-deleted object."""
         self.is_deleted = False
-        self.save(update_fields=['is_deleted', 'updated_at'])
+        self.save(update_fields=["is_deleted", "updated_at"])

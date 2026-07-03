@@ -3,6 +3,7 @@
 Services own business logic. Views call services; services call the ORM.
 This keeps views thin and business logic testable.
 """
+
 import logging
 
 from django.contrib.auth import get_user_model
@@ -22,7 +23,7 @@ class UserService:
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist as exc:
-            raise NotFoundError('User', user_id) from exc
+            raise NotFoundError("User", user_id) from exc
 
     @staticmethod
     def update_profile(user: User, data: dict) -> User:
@@ -31,21 +32,20 @@ class UserService:
         Only allows updating first_name and last_name.
         Raises ValidationError if no valid fields provided.
         """
-        allowed_fields = {'first_name', 'last_name'}
+        allowed_fields = {"first_name", "last_name"}
         update_data = {k: v for k, v in data.items() if k in allowed_fields}
 
         if not update_data:
             raise ValidationError(
-                'No valid fields to update.',
-                detail={'fields': f'Allowed: {", ".join(sorted(allowed_fields))}'},
+                "No valid fields to update.",
+                detail={"fields": f"Allowed: {', '.join(sorted(allowed_fields))}"},
             )
 
         for field, value in update_data.items():
             setattr(user, field, value)
 
-        user.save(update_fields=list(update_data.keys()) + ['updated_at'])
+        user.save(update_fields=list(update_data.keys()) + ["updated_at"])
         logger.info(
-            'user_profile_updated',
-            extra={'user_id': user.id, 'fields': list(update_data.keys())}
+            "user_profile_updated", extra={"user_id": user.id, "fields": list(update_data.keys())}
         )
         return user

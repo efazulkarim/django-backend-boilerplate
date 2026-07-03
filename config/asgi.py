@@ -1,4 +1,5 @@
 """ASGI config for My API Project with Channels."""
+
 import os
 
 from channels.auth import AuthMiddlewareStack
@@ -8,15 +9,17 @@ from django.urls import path
 
 from apps.core.consumers import NotificationConsumer
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 django_asgi_app = get_asgi_application()
 
 websocket_urlpatterns = [
-    path('ws/notifications/', NotificationConsumer.as_asgi()),
+    path("ws/notifications/", NotificationConsumer.as_asgi()),
 ]
 
-application = ProtocolTypeRouter({
-    'http': AuthMiddlewareStack(django_asgi_app),
-    'websocket': AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
-})
+application = ProtocolTypeRouter(
+    {
+        "http": AuthMiddlewareStack(django_asgi_app),
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
+    }
+)

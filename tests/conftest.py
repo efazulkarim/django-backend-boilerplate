@@ -1,4 +1,5 @@
 """Pytest configuration and shared fixtures."""
+
 import os
 import sys
 
@@ -11,7 +12,7 @@ from tests.factories import UserFactory
 
 def pytest_configure():
     """Configure Django settings for pytest."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.test')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.test")
     sys.path.insert(0, os.path.dirname(__file__))
     django.setup()
 

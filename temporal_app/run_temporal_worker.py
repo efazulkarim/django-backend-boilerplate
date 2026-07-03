@@ -1,4 +1,5 @@
 """Run Temporal worker."""
+
 import asyncio
 import os
 from temporalio.client import Client
@@ -12,14 +13,14 @@ async def main():
     """Run the Temporal worker."""
     # Connect to Temporal server
     client = await Client.connect(
-        os.environ.get('TEMPORAL_HOST', 'localhost:7233'),
-        namespace=os.environ.get('TEMPORAL_NAMESPACE', 'default'),
+        os.environ.get("TEMPORAL_HOST", "localhost:7233"),
+        namespace=os.environ.get("TEMPORAL_NAMESPACE", "default"),
     )
 
     # Create and start worker
     worker = Worker(
         client,
-        task_queue='my-api-project-task-queue',
+        task_queue="my-api-project-task-queue",
         workflows=[onboarding_workflow, payment_workflow],
     )
 
@@ -27,5 +28,5 @@ async def main():
     await worker.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

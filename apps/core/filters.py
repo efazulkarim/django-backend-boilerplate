@@ -1,4 +1,5 @@
 """Reusable filter utilities and base filter backends."""
+
 from django.db.models import Q
 from rest_framework.filters import BaseFilterBackend
 
@@ -14,9 +15,9 @@ class OwnerFilterBackend(BaseFilterBackend):
         if request.user.is_staff:
             return queryset
 
-        if hasattr(queryset.model, 'user'):
+        if hasattr(queryset.model, "user"):
             return queryset.filter(user=request.user)
-        if hasattr(queryset.model, 'author'):
+        if hasattr(queryset.model, "author"):
             return queryset.filter(author=request.user)
 
         return queryset
@@ -37,6 +38,6 @@ def build_search_filter(search_fields: list[str], query: str) -> Q:
         return q
 
     for field in search_fields:
-        q |= Q(**{f'{field}__icontains': query})
+        q |= Q(**{f"{field}__icontains": query})
 
     return q

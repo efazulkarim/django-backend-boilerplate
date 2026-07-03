@@ -1,4 +1,5 @@
 """Reusable DRF permission classes."""
+
 from rest_framework.permissions import BasePermission
 
 
@@ -10,7 +11,7 @@ class IsOwner(BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        owner = getattr(obj, 'user', None) or getattr(obj, 'author', None)
+        owner = getattr(obj, "user", None) or getattr(obj, "author", None)
         if owner is None:
             return False
         return owner == request.user
@@ -27,9 +28,9 @@ class IsOwnerOrReadOnly(BasePermission):
     """Allow write access only to the owner; read access to all."""
 
     def has_object_permission(self, request, view, obj):
-        if request.method in ('GET', 'HEAD', 'OPTIONS'):
+        if request.method in ("GET", "HEAD", "OPTIONS"):
             return True
-        owner = getattr(obj, 'user', None) or getattr(obj, 'author', None)
+        owner = getattr(obj, "user", None) or getattr(obj, "author", None)
         if owner is None:
             return False
         return owner == request.user

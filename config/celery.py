@@ -1,18 +1,21 @@
 """Celery configuration."""
+
 import os
 from celery import Celery  # pylint: disable=import-self
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.dev")
 
-app = Celery('my_api_project')
+app = Celery("my_api_project")
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
-app.config_from_object('django.conf:settings')
+app.config_from_object("django.conf:settings")
 
 # Load task modules from all registered Django app configs.
-app.autodiscover_tasks([
-    'apps',
-    'config',
-])
+app.autodiscover_tasks(
+    [
+        "apps",
+        "config",
+    ]
+)

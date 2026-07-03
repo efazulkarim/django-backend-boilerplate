@@ -1,11 +1,12 @@
 """URL configuration for My API Project."""
+
 from django.contrib import admin
 from django.urls import path, include
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('apps.api.urls')),
-    path('', include('allauth.urls')),
-    path('health/', include('apps.core.urls')),
+    path("admin/", admin.site.urls),
+    path("api/", include("apps.api.urls")),
+    path("", include("allauth.urls")),
+    path("health/", include("apps.core.urls")),
 ]

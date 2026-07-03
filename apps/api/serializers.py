@@ -1,4 +1,5 @@
 """DRF serializers for the API app."""
+
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -11,12 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id',
-            'email',
-            'first_name',
-            'last_name',
-            'is_staff',
-            'date_joined',
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "date_joined",
         ]
         read_only_fields = fields
 
@@ -27,6 +28,6 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'first_name',
-            'last_name',
+            "first_name",
+            "last_name",
         ]

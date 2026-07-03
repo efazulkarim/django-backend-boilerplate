@@ -1,26 +1,27 @@
 # pylint: disable=wildcard-import,unused-wildcard-import
 """Test settings."""
+
 from .dev import *  # noqa: F403
 
 # Override for testing
 DEBUG = False
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": ":memory:",
     }
 }
 
 # Speed up password hashing in tests
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.MD5PasswordHasher',
+    "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
 
 # Disable password validators in tests
 AUTH_PASSWORD_VALIDATORS = []
 
 # Disable email during tests
-EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # Disable SSL redirect and security features in tests
 SECURE_SSL_REDIRECT = False
