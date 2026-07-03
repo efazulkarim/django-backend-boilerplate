@@ -55,6 +55,23 @@ target-version = "py312"
 python_version = "3.12"
 plugins = ["mypy_django_plugin.main"]
 strict = true
+packages = ["apps", "config", "temporal_app"]
+exclude = ["migrations"]
+
+[[tool.mypy.overrides]]
+module = [
+    "channels.*",
+    "allauth.*",
+    "corsheaders.*",
+    "drf_spectacular.*",
+    "sentry_sdk.*",
+    "celery.*",
+    "redis.*",
+]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.test"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
