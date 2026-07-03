@@ -7,7 +7,7 @@ from temporalio import workflow, activity
 def send_email(to: str, subject: str, body: str) -> str:
     """Send email activity."""
     # Integrate with your email service
-    print(f"Sending email to {to}: {subject}")
+    print(f"Sending email to {to}: {subject} - {body}")
     return f"Email sent to {to}"
 
 
@@ -20,29 +20,31 @@ def process_report(user_id: int) -> str:
 
 
 @workflow.defn
-def onboarding_workflow(user_id: int, email: str) -> str:
+async def onboarding_workflow(user_id: int, email: str) -> str:
     """User onboarding workflow."""
     # Send welcome email
-    result = yield activity.execute(
+    result = await workflow.execute_activity(
         send_email,
-        args=[email, "Welcome!", "Welcome to My API Project"]
+        args=[email, "Welcome!", "Welcome to My API Project"],
+        start_to_close_timeout=timedelta(seconds=5),
     )
-    
+
     # Process initial report
-    report_result = yield activity.execute(
+    report_result = await workflow.execute_activity(
         process_report,
-        args=[user_id]
+        args=[user_id],
+        start_to_close_timeout=timedelta(seconds=60),
     )
-    
-    return f"Onboarding complete for user {user_id}: {result}"
+
+    return f"Onboarding complete for user {user_id}: {result} | Report: {report_result}"
 
 
 @workflow.defn
-def payment_workflow(user_id: int, amount: float) -> str:
+async def payment_workflow(user_id: int, amount: float) -> str:
     """Payment processing workflow."""
     # Validate payment
     # Process payment
     # Send confirmation
     # Handle retries
-    
+
     return f"Payment of ${amount:.2f} processed for user {user_id}"

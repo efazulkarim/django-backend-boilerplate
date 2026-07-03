@@ -8,7 +8,6 @@ Wire in config/asgi.py's URLRouter:
         path('ws/notifications/', NotificationConsumer.as_asgi()),
     ]
 """
-import json
 import logging
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
@@ -23,6 +22,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
     Messages are broadcast to the 'notifications' group.
     """
 
+    group_name = None
+
     async def connect(self):
         self.group_name = 'notifications'
 
@@ -32,9 +33,12 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
         logger.info('websocket_connected', extra={'channel': self.channel_name})
 
-    async def disconnect(self, close_code):
+    async def disconnect(self, code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-        logger.info('websocket_disconnected', extra={'channel': self.channel_name, 'code': close_code})
+        logger.info(
+            'websocket_disconnected',
+            extra={'channel': self.channel_name, 'code': code}
+        )
 
     async def receive_json(self, content, **kwargs):
         """Handle incoming messages from the client.
@@ -42,7 +46,10 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         Echo the message back and broadcast to the group.
         """
         message = content.get('message', '')
-        logger.info('websocket_message_received', extra={'channel': self.channel_name, 'message': message})
+        logger.info(
+            'websocket_message_received',
+            extra={'channel': self.channel_name, 'message': message}
+        )
 
         # Broadcast to notification group
         await self.channel_layer.group_send(

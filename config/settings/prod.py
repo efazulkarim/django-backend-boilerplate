@@ -1,4 +1,7 @@
+# pylint: disable=wildcard-import,unused-wildcard-import
 """Production settings."""
+import os
+
 from .base import *
 
 # Override for production

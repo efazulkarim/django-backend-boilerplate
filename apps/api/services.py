@@ -21,8 +21,8 @@ class UserService:
         """Fetch a user by ID or raise NotFoundError."""
         try:
             return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            raise NotFoundError('User', user_id)
+        except User.DoesNotExist as exc:
+            raise NotFoundError('User', user_id) from exc
 
     @staticmethod
     def update_profile(user: User, data: dict) -> User:
@@ -44,5 +44,8 @@ class UserService:
             setattr(user, field, value)
 
         user.save(update_fields=list(update_data.keys()) + ['updated_at'])
-        logger.info('user_profile_updated', extra={'user_id': user.id, 'fields': list(update_data.keys())})
+        logger.info(
+            'user_profile_updated',
+            extra={'user_id': user.id, 'fields': list(update_data.keys())}
+        )
         return user

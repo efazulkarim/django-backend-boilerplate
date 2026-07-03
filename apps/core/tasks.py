@@ -1,3 +1,4 @@
+# pylint: disable=import-outside-toplevel,no-name-in-module,fixme
 """Example Celery tasks for the core app.
 
 Celery is for fire-and-forget and scheduled tasks.
@@ -17,12 +18,20 @@ def send_notification_email(self, user_id: int, subject: str, body: str):
     Uses Celery retry with exponential backoff on failure.
     In production, replace the print with actual email sending.
     """
-    logger.info('send_notification_started', extra={'task_id': self.request.id, 'user_id': user_id})
+    logger.info(
+        'send_notification_started',
+        extra={
+            'task_id': self.request.id,
+            'user_id': user_id,
+            'subject': subject,
+            'body': body,
+        }
+    )
 
     try:
         from django.contrib.auth import get_user_model
-        User = get_user_model()
-        user = User.objects.get(pk=user_id)
+        user_model = get_user_model()
+        user = user_model.objects.get(pk=user_id)
 
         # TODO: Replace with actual email sending (e.g. django.core.mail.send_mail)
         logger.info(

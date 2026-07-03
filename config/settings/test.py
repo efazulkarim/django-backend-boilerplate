@@ -1,3 +1,4 @@
+# pylint: disable=wildcard-import,unused-wildcard-import
 """Test settings."""
 from .dev import *  # noqa: F401,F403
 

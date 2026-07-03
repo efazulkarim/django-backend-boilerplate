@@ -1,6 +1,5 @@
 """Abstract base models for reuse across all apps."""
 from django.db import models
-from django.utils import timezone
 
 
 class TimestampedModel(models.Model):
@@ -14,10 +13,11 @@ class TimestampedModel(models.Model):
         ordering = ['-created_at']
 
 
-class SoftDeleteManager(models.Manager):
+class SoftDeleteManager(models.Manager):  # pylint: disable=too-few-public-methods
     """Manager that excludes soft-deleted objects by default."""
 
     def get_queryset(self):
+        """Exclude soft-deleted items from query results."""
         return super().get_queryset().filter(is_deleted=False)
 
 

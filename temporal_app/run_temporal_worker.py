@@ -15,14 +15,14 @@ async def main():
         os.environ.get('TEMPORAL_HOST', 'localhost:7233'),
         namespace=os.environ.get('TEMPORAL_NAMESPACE', 'default'),
     )
-    
+
     # Create and start worker
     worker = Worker(
         client,
         task_queue='my-api-project-task-queue',
         workflows=[onboarding_workflow, payment_workflow],
     )
-    
+
     print("Temporal worker started. Press Ctrl+C to stop.")
     await worker.run()
 

@@ -60,3 +60,12 @@ strict = true
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py"]
 testpaths = ["tests"]
+
+[tool.pylint.main]
+load-plugins = ["pylint_django"]
+django-settings-module = "config.settings.dev"
+ignore-paths = ["^.*/migrations/.*$"]
+
+[tool.pylint.format]
+max-line-length = 100
+

@@ -5,7 +5,7 @@ import uuid
 logger = logging.getLogger(__name__)
 
 
-class RequestLoggingMiddleware:
+class RequestLoggingMiddleware:  # pylint: disable=too-few-public-methods
     """Attach a request ID and log request/response cycle.
 
     Adds X-Request-ID header to every response for trace correlation.
