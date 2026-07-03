@@ -1,7 +1,12 @@
 """Custom middleware for request logging and tracing."""
 
+from __future__ import annotations
+
 import logging
 import uuid
+from typing import Callable
+
+from django.http import HttpRequest, HttpResponse
 
 logger = logging.getLogger(__name__)
 
@@ -12,12 +17,12 @@ class RequestLoggingMiddleware:  # pylint: disable=too-few-public-methods
     Adds X-Request-ID header to every response for trace correlation.
     """
 
-    def __init__(self, get_response):
+    def __init__(self, get_response: Callable[[HttpRequest], HttpResponse]) -> None:
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: HttpRequest) -> HttpResponse:
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
-        request.request_id = request_id
+        request.request_id = request_id  # type: ignore[attr-defined]
 
         logger.info(
             "request_started",

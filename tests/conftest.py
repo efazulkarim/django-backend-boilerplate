@@ -1,7 +1,10 @@
 """Pytest configuration and shared fixtures."""
 
+from __future__ import annotations
+
 import os
 import sys
+from typing import Any
 
 import django
 import pytest
@@ -10,7 +13,7 @@ from rest_framework.test import APIClient
 from tests.factories import UserFactory
 
 
-def pytest_configure():
+def pytest_configure() -> None:
     """Configure Django settings for pytest."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.test")
     sys.path.insert(0, os.path.dirname(__file__))
@@ -18,25 +21,25 @@ def pytest_configure():
 
 
 @pytest.fixture
-def user(db):
+def user(db: None) -> Any:
     """Create a standard user."""
-    return UserFactory()
+    return UserFactory()  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture
-def admin_user(db):
+def admin_user(db: None) -> Any:
     """Create an admin/staff user."""
-    return UserFactory(is_staff=True)
+    return UserFactory(is_staff=True)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture
-def client():
+def client() -> APIClient:
     """DRF API client (unauthenticated)."""
     return APIClient()
 
 
 @pytest.fixture
-def auth_client(user):
+def auth_client(user: Any) -> APIClient:
     """DRF API client authenticated as a standard user."""
     client = APIClient()
     client.force_authenticate(user=user)
@@ -44,7 +47,7 @@ def auth_client(user):
 
 
 @pytest.fixture
-def admin_client(admin_user):
+def admin_client(admin_user: Any) -> APIClient:
     """DRF API client authenticated as an admin."""
     client = APIClient()
     client.force_authenticate(user=admin_user)

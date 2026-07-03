@@ -2,13 +2,14 @@
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def health_check(request):
+def health_check(request: Request) -> Response:
     """Health check endpoint."""
     return Response(
         {
@@ -22,7 +23,7 @@ def health_check(request):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def readiness_check(request):
+def readiness_check(request: Request) -> Response:
     """Readiness check endpoint."""
     return Response(
         {

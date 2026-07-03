@@ -1,7 +1,10 @@
 """Run Temporal worker."""
 
+from __future__ import annotations
+
 import asyncio
 import os
+
 from temporalio.client import Client
 from temporalio.worker import Worker
 
@@ -9,7 +12,7 @@ from temporalio.worker import Worker
 from temporal_app.workflows import onboarding_workflow, payment_workflow
 
 
-async def main():
+async def main() -> None:
     """Run the Temporal worker."""
     # Connect to Temporal server
     client = await Client.connect(

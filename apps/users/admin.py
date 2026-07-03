@@ -1,12 +1,21 @@
 """Users admin configuration."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from .models import User
 
+if TYPE_CHECKING:
+    _BaseUserAdmin = BaseUserAdmin[User]
+else:
+    _BaseUserAdmin = BaseUserAdmin
 
-class UserAdmin(BaseUserAdmin):
+
+class UserAdmin(_BaseUserAdmin):
     """Custom user admin."""
 
     ordering = ("email",)
@@ -31,7 +40,7 @@ class UserAdmin(BaseUserAdmin):
     )
     add_fieldsets = ((None, {"fields": ("email", "password1", "password2")}),)
     add_form = UserCreationForm
-    form = UserChangeForm
+    form = UserChangeForm  # type: ignore[assignment]
 
 
 admin.site.register(User, UserAdmin)

@@ -1,7 +1,13 @@
 """Reusable filter utilities and base filter backends."""
 
-from django.db.models import Q
+from __future__ import annotations
+
+from typing import Any
+
+from django.db.models import Q, QuerySet
 from rest_framework.filters import BaseFilterBackend
+from rest_framework.request import Request
+from rest_framework.views import APIView
 
 
 class OwnerFilterBackend(BaseFilterBackend):
@@ -11,7 +17,9 @@ class OwnerFilterBackend(BaseFilterBackend):
     Only applies to non-staff users.
     """
 
-    def filter_queryset(self, request, queryset, view):
+    def filter_queryset(
+        self, request: Request, queryset: QuerySet[Any], view: APIView
+    ) -> QuerySet[Any]:
         if request.user.is_staff:
             return queryset
 

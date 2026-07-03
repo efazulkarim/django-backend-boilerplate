@@ -1,7 +1,10 @@
 """Temporal workflows for async processing."""
 
+from __future__ import annotations
+
 from datetime import timedelta
-from temporalio import workflow, activity
+
+from temporalio import activity, workflow
 
 
 @activity.defn
@@ -20,7 +23,7 @@ def process_report(user_id: int) -> str:
     return f"Report processed for user {user_id}"
 
 
-@workflow.defn
+@workflow.defn  # type: ignore[call-overload]
 async def onboarding_workflow(user_id: int, email: str) -> str:
     """User onboarding workflow."""
     # Send welcome email
@@ -40,7 +43,7 @@ async def onboarding_workflow(user_id: int, email: str) -> str:
     return f"Onboarding complete for user {user_id}: {result} | Report: {report_result}"
 
 
-@workflow.defn
+@workflow.defn  # type: ignore[call-overload]
 async def payment_workflow(user_id: int, amount: float) -> str:
     """Payment processing workflow."""
     # Validate payment

@@ -2,6 +2,7 @@
 
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.viewsets import ViewSet
@@ -11,7 +12,7 @@ from apps.api.serializers import UserSerializer, UserProfileUpdateSerializer
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-def api_root(request):
+def api_root(request: Request) -> Response:
     """API root endpoint."""
     return Response(
         {
@@ -34,7 +35,7 @@ class UserViewSet(ViewSet):
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=["get", "patch"], url_path="profile")
-    def profile(self, request):
+    def profile(self, request: Request) -> Response:
         """GET: return current user profile. PATCH: update profile."""
         if request.method == "PATCH":
             serializer = UserProfileUpdateSerializer(request.user, data=request.data, partial=True)

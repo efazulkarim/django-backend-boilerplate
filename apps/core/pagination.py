@@ -1,5 +1,9 @@
 """Custom pagination classes."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
@@ -15,7 +19,9 @@ class StandardPagination(PageNumberPagination):
     page_size_query_param = "page_size"
     max_page_size = 100
 
-    def get_paginated_response(self, data):
+    def get_paginated_response(self, data: list[Any]) -> Response:
+        assert self.page is not None
+        assert self.request is not None
         return Response(
             {
                 "count": self.page.paginator.count,

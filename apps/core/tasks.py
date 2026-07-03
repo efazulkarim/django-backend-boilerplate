@@ -12,8 +12,10 @@ from celery import shared_task
 logger = logging.getLogger(__name__)
 
 
-@shared_task(bind=True, max_retries=3, default_retry_delay=60)
-def send_notification_email(self, user_id: int, subject: str, body: str):
+@shared_task(bind=True, max_retries=3, default_retry_delay=60)  # type: ignore[untyped-decorator]
+def send_notification_email(
+    self: object, user_id: int, subject: str, body: str
+) -> dict[str, object]:
     """Send a notification email to a user.
 
     Uses Celery retry with exponential backoff on failure.
@@ -22,7 +24,7 @@ def send_notification_email(self, user_id: int, subject: str, body: str):
     logger.info(
         "send_notification_started",
         extra={
-            "task_id": self.request.id,
+            "task_id": self.request.id,  # type: ignore[attr-defined]
             "user_id": user_id,
             "subject": subject,
             "body": body,
@@ -38,20 +40,20 @@ def send_notification_email(self, user_id: int, subject: str, body: str):
         # TODO: Replace with actual email sending (e.g. django.core.mail.send_mail)
         logger.info(
             "send_notification_completed",
-            extra={"task_id": self.request.id, "user_id": user_id, "email": user.email},
+            extra={"task_id": self.request.id, "user_id": user_id, "email": user.email},  # type: ignore[attr-defined]
         )
         return {"status": "sent", "user_id": user_id, "email": user.email}
 
     except Exception as exc:
         logger.warning(
             "send_notification_retry",
-            extra={"task_id": self.request.id, "user_id": user_id, "error": str(exc)},
+            extra={"task_id": self.request.id, "user_id": user_id, "error": str(exc)},  # type: ignore[attr-defined]
         )
-        raise self.retry(exc=exc) from None
+        raise self.retry(exc=exc) from None  # type: ignore[attr-defined]
 
 
-@shared_task
-def cleanup_expired_tokens():
+@shared_task  # type: ignore[untyped-decorator]
+def cleanup_expired_tokens() -> dict[str, int]:
     """Remove expired auth tokens. Schedule via Celery Beat.
 
     Add to CELERY_BEAT_SCHEDULE in settings:
@@ -60,10 +62,12 @@ def cleanup_expired_tokens():
             'schedule': crontab(hour=3, minute=0),  # daily at 3am
         }
     """
+    from datetime import timedelta
+
     from django.utils import timezone
     from rest_framework.authtoken.models import Token
 
-    threshold = timezone.now() - timezone.timedelta(days=30)
+    threshold = timezone.now() - timedelta(days=30)
     expired = Token.objects.filter(created__lt=threshold)
     count = expired.count()
     expired.delete()

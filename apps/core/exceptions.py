@@ -1,6 +1,9 @@
 """Custom exceptions and DRF exception handler."""
 
+from __future__ import annotations
+
 import logging
+from typing import Any
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -65,8 +68,8 @@ class ConflictError(AppError):
 class ValidationError(AppError):
     """Service-layer validation error."""
 
-    def __init__(self, message: str, detail: dict | None = None):
-        self.detail = detail or {}
+    def __init__(self, message: str, detail: dict[str, Any] | None = None):
+        self.detail: dict[str, Any] = detail or {}
         super().__init__(
             message=message,
             code="validation_error",
@@ -79,7 +82,7 @@ class ValidationError(AppError):
 # ---------------------------------------------------------------------------
 
 
-def custom_exception_handler(exc, context):
+def custom_exception_handler(exc: Exception, context: dict[str, Any]) -> Response | None:
     """DRF exception handler that ensures consistent error shape.
 
     - Handles AppError subclasses with structured JSON.
@@ -88,7 +91,7 @@ def custom_exception_handler(exc, context):
     """
     # Handle our custom exceptions
     if isinstance(exc, AppError):
-        data = {
+        data: dict[str, Any] = {
             "error": exc.message,
             "code": exc.code,
         }

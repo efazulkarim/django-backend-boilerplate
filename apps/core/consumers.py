@@ -9,23 +9,26 @@ Wire in config/asgi.py's URLRouter:
     ]
 """
 
+from __future__ import annotations
+
 import logging
+from typing import Any
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 
 logger = logging.getLogger(__name__)
 
 
-class NotificationConsumer(AsyncJsonWebsocketConsumer):
+class NotificationConsumer(AsyncJsonWebsocketConsumer):  # type: ignore[misc]
     """WebSocket consumer for real-time notifications.
 
     Clients connect to ws/notifications/ and receive JSON messages.
     Messages are broadcast to the 'notifications' group.
     """
 
-    group_name = None
+    group_name: str | None = None
 
-    async def connect(self):
+    async def connect(self) -> None:
         self.group_name = "notifications"
 
         # Join notification group
@@ -34,11 +37,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
         logger.info("websocket_connected", extra={"channel": self.channel_name})
 
-    async def disconnect(self, code):
+    async def disconnect(self, code: int) -> None:
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
         logger.info("websocket_disconnected", extra={"channel": self.channel_name, "code": code})
 
-    async def receive_json(self, content, **kwargs):
+    async def receive_json(self, content: dict[str, Any], **kwargs: Any) -> None:
         """Handle incoming messages from the client.
 
         Echo the message back and broadcast to the group.
@@ -57,7 +60,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             },
         )
 
-    async def notification_message(self, event):
+    async def notification_message(self, event: dict[str, Any]) -> None:
         """Handle messages broadcast to the notification group."""
         await self.send_json(
             {
