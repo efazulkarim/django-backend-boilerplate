@@ -8,7 +8,7 @@
   - **API Layer**: Django REST Framework (DRF) for RESTful endpoints.
   - **WebSockets**: Django Channels for real-time, bi-directional communication.
   - **Asynchronous Processing**: Dual-engine approach using **Celery** (for fire-and-forget/scheduled tasks) and **Temporal** (for stateful, durable, long-running workflows).
-  - **Data Layer**: PostgreSQL (relational DB) and Redis (in-memory cache, message broker, channel layer).
+  - **Data Layer**: PostgreSQL (relational DB), Redis (caching and Channels layer), and RabbitMQ (asynchronous message broker).
 
 ## 2. Codebase Structure
 The project is strictly organized to separate configuration, domain logic, and background processing:
@@ -39,9 +39,9 @@ The project is strictly organized to separate configuration, domain logic, and b
 ## 4. State & Data Management
 - **Primary Data Store**: PostgreSQL via Django ORM. Standard relational modeling. The `User` model is customized to use email as the primary identifier.
 - **Caching & State**: Redis serves multiple roles:
-  1. Django Cache backend (implied for typical setups, used for sessions/rate limiting).
-  2. Celery Message Broker (`redis://localhost:6379/0`).
-  3. Django Channels Layer (`channels_redis.core.RedisChannelLayer`).
+  1. Django Cache backend (configured via `django-redis` with connection pool overrides in production for caching and sessions).
+  2. Django Channels Layer (`channels_redis.core.RedisChannelLayer` for WebSocket pub/sub).
+- **Message Broker**: RabbitMQ serves as the primary message broker for Celery, separating high-throughput queueing tasks from fast state storage/caching to prevent performance bottlenecks.
 
 ## 5. Configuration & Environment
 - **Environment Variables**: Heavy reliance on `.env` injected via `os.environ` in `config/settings/base.py`. Secrets (`SECRET_KEY`, `SENTRY_DSN`, `DB_PASSWORD`) are properly abstracted.
@@ -49,7 +49,7 @@ The project is strictly organized to separate configuration, domain logic, and b
 
 ## 6. Async & Background Processing
 The system employs an unusual but powerful **dual-engine** approach:
-- **Celery**: Configured with `django-celery-beat` (implied for scheduling). Best for crons, straightforward async tasks (e.g., resizing an image), and high-throughput/low-latency queueing.
+- **Celery**: Configured with `django-celery-beat` (for scheduling) and RabbitMQ broker. Optimizations like prefetch limit (1), max tasks per worker child (1000), and late task acknowledgements are applied to prevent memory leaks and handle worker dropouts safely.
 - **Temporal**: Integrated for complex sagas and orchestrations (e.g., the nested `payment_workflow` and `onboarding_workflow` in `temporal_app/workflows.py`). Provides durable executions and automatic retries out of the box.
 
 *Critique*: Maintaining both Celery and Temporal workers is operational overhead. Unless there's a strict boundary (Celery for fast background HTTP responses, Temporal for distributed sagas), consider consolidating on Temporal.
@@ -58,12 +58,15 @@ The system employs an unusual but powerful **dual-engine** approach:
 - **Sentry**: Integrated natively (`sentry-sdk`) with performance tracing.
 - **Mailpit**: Included in `docker-compose.yml` for local SMTP trapping and testing without external API limits.
 - **Authentication**: Integrates `django-allauth` for robust standard and social auth flows.
+- **Observability & Metrics**: Integrated `django-prometheus` to export database, cache, and HTTP request performance metrics on `/metrics`.
+- **Trace Correlation**: Implemented request context tracing that automatically propagates correlation IDs (`X-Request-ID` / `HTTP_X_REQUEST_ID`) through thread-local state down into Celery background task logs, making it simple to trace the execution history.
+- **API Documentation**: Interactive Swagger (`/api/schema/swagger/`) and Redoc (`/api/schema/redoc/`) API documentation endpoints wired via `drf-spectacular`.
 
 ## 8. DevOps & Deployment
-- **Local Dev**: Handled beautifully via `docker-compose.yml` (spins up Postgres, Redis, Mailpit, Temporal Cluster, Flower).
-- **Tooling**: Uses `uv` for hyper-fast dependency resolution (via `pyproject.toml`), `Justfile` as a modern `Make` alternative for task running.
-- **Code Quality**: Enforced via `ruff` (linter/formatter) and `mypy` (strict static typing).
-- **Deployment Build**: Includes a production `Dockerfile`.
+- **Local Dev**: Handled beautifully via `docker-compose.yml` (spins up Postgres, Redis, RabbitMQ, Mailpit, Temporal Cluster, Flower).
+- **Production Stack**: Orchestrated using `docker-compose.prod.yml` and `nginx/prod.conf` to serve static/media files directly and reverse proxy HTTP and WebSocket connections to Django (Daphne).
+- **CI/CD Pipeline**: Enhanced GitHub Actions workflow (`ci.yml`) leveraging `uv` caching, executing static code quality checks (`ruff`, `mypy`), running Django deployment settings checks (`check --deploy`), and verifying Docker builds and health checks on every pull request.
+- **Health & Readiness Checking**: Implemented secure, live health and readiness check views validating PostgreSQL database query connectivity, Redis cache read/write access, and Celery broker connection health, while hiding tracebacks and credentials from unauthenticated callers.
 
 ## 9. Extensibility
 The modular architecture is highly extensible:

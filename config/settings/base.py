@@ -160,6 +160,14 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "apps.core.exceptions.custom_exception_handler",
 }
 
+# API Schema Documentation Settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "My API Project",
+    "DESCRIPTION": "A production-ready Django API with Celery, Temporal, and WebSockets",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 # CORS
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
