@@ -7,13 +7,15 @@ A production-ready Django API with Celery, Temporal, and WebSockets.
 - Django 6.0 with Python 3.12+
 - Django REST Framework (DRF) with OpenAPI 3.0 (drf-spectacular)
 - Django-allauth for authentication (session-based)
-- Celery for background tasks
+- Celery for background tasks (configured with RabbitMQ broker in production)
 - Temporal for durable workflows
-- Django Channels for WebSockets
-- PostgreSQL database
-- Redis for caching
+- Django Channels for WebSockets (Redis channel layer)
+- PostgreSQL database (with Prometheus query metrics backend in production)
+- Redis for caching (production-ready `django-redis` with connection pool) and sessions
 - Sentry for error tracking
-- Structured JSON logging
+- Robust Health Checks (checks DB, Cache, and Celery broker)
+- Structured JSON logging with request ID trace correlation across HTTP calls and Celery tasks
+- Prometheus Metrics Exporter (`/metrics`) for system observability
 
 ## Prerequisites
 
@@ -28,16 +30,20 @@ A production-ready Django API with Celery, Temporal, and WebSockets.
    ```bash
    # Using uv (recommended)
    pip install uv
-   uv sync
+   uv sync --extra dev
 
    # Or using pip
-   pip install -e .
+   pip install -r requirements-dev.txt
    ```
 
 2. **Start services**:
 
    ```bash
+   # Start local development services (Postgres, Redis, RabbitMQ, Mailpit, Temporal, Flower)
    docker compose up -d
+
+   # Or start the full production stack
+   docker compose -f docker-compose.prod.yml up -d
    ```
 
 3. **Configure environment**:
@@ -71,7 +77,11 @@ A production-ready Django API with Celery, Temporal, and WebSockets.
 - API Docs (Swagger): http://localhost:8000/api/schema/swagger/
 - Mailpit (email testing): http://localhost:8025
 - Flower (Celery): http://localhost:5555
+- RabbitMQ Management: http://localhost:15672 (guest/guest)
 - Temporal UI: http://localhost:8088
+- Prometheus Metrics: http://localhost:8000/metrics
+- Health Check: http://localhost:8000/health/
+- Readiness Check: http://localhost:8000/health/ready/
 
 ## Project Structure
 

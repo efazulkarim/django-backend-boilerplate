@@ -33,7 +33,7 @@ uv sync
 
 ## Step 2: Start Docker Services
 
-This starts PostgreSQL, Redis, Mailpit (email testing), and Temporal (workflows):
+This starts PostgreSQL, Redis, RabbitMQ (broker), Mailpit (email testing), and Temporal (workflows):
 
 ```bash
 cd d:\Backend\my-api-project
@@ -43,7 +43,8 @@ docker compose up -d
 Expected services to start:
 
 - postgres: Database on port 5432
-- redis: Cache & message broker on port 6379
+- redis: Caching on port 6379
+- rabbitmq: AMQP broker on port 5672 (Management on http://localhost:15672)
 - mailpit: Email testing UI on http://localhost:8025
 - temporal: Workflow engine UI on http://localhost:8088
 - flower: Celery monitoring on http://localhost:5555
@@ -75,8 +76,10 @@ DJANGO_SETTINGS_MODULE=config.settings.dev
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/my_api_project
 
 # Redis
-REDIS_URL=redis://localhost:6379/0
-CELERY_BROKER_URL=redis://localhost:6379/0
+REDIS_URL=redis://localhost:6379/1
+
+# Celery
+CELERY_BROKER_URL=amqp://guest:guest@localhost:5672//
 CELERY_RESULT_BACKEND=redis://localhost:6379/0
 
 # Temporal

@@ -27,6 +27,7 @@ AWS_S3_REGION_NAME = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
 # Production database
 DATABASES["default"].update(  # noqa: F405
     {
+        "ENGINE": "django_prometheus.db.backends.postgresql",
         "NAME": os.environ.get("DB_NAME") or "",
         "USER": os.environ.get("DB_USER") or "",
         "PASSWORD": os.environ.get("DB_PASSWORD") or "",
@@ -34,3 +35,17 @@ DATABASES["default"].update(  # noqa: F405
         "PORT": os.environ.get("DB_PORT") or "",
     }
 )
+
+# Production Redis Cache overrides (updating location and merging options selectively)
+CACHES["default"]["LOCATION"] = os.environ.get("REDIS_URL", "redis://redis:6379/1")  # noqa: F405
+options = CACHES["default"].setdefault("OPTIONS", {})  # noqa: F405
+if isinstance(options, dict):
+    options.update(
+        {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": int(os.environ.get("REDIS_MAX_CONNECTIONS", 100)),
+                "retry_on_timeout": True,
+            },
+        }
+    )

@@ -13,3 +13,5 @@ psycopg[binary]>=3.2.0,<4.0
 python-json-logger>=2.0.7,<3.0
 sentry-sdk>=2.0.0,<3.0
 temporalio>=1.7.0,<2.0
+django-redis>=5.4.0,<6.0
+django-prometheus>=2.3.0,<3.0

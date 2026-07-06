@@ -22,6 +22,8 @@ dependencies = [
     "sentry-sdk>=2.0.0,<3.0",
     "temporalio>=1.7.0,<2.0",
     "gunicorn>=23.0.0,<24.0",
+    "django-redis>=5.4.0,<6.0",
+    "django-prometheus>=2.3.0,<3.0",
 ]
 
 [project.optional-dependencies]
