@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: postgres_prod
     environment:
       POSTGRES_DB: ${DB_NAME:-my_api_project}
       POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres_prod_password}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_prod_data:/var/lib/postgresql/data
     healthcheck:
@@ -18,7 +18,7 @@ services:
     restart: always
 
   redis:
-    image: redis:7-alpine
+    image: redis:7.4-alpine
     container_name: redis_prod
     command: redis-server --appendonly yes
     volumes:
@@ -31,11 +31,11 @@ services:
     restart: always
 
   rabbitmq:
-    image: rabbitmq:3.13-management-alpine
+    image: rabbitmq:4.0-management-alpine
     container_name: rabbitmq_prod
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "check_running"]
       interval: 10s
@@ -136,7 +136,7 @@ services:
     restart: always
 
   nginx:
-    image: nginx:1.25-alpine
+    image: nginx:1.27-alpine
     container_name: nginx_prod
     ports:
       - "80:80"
