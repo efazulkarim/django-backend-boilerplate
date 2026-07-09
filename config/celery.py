@@ -42,6 +42,7 @@ def before_task_publish_handler(
 ) -> None:
     """Propagate the current request's correlation ID to the Celery task context."""
     from apps.core.logging import request_id_var
+
     if headers is not None:
         headers["x_request_id"] = request_id_var.get()
 
@@ -50,6 +51,7 @@ def before_task_publish_handler(
 def task_prerun_handler(task: Any, **kwargs: Any) -> None:
     """Restore the correlation ID from the task headers into the local logging context."""
     from apps.core.logging import request_id_var
+
     request_id = None
     task_id = "unknown"
 

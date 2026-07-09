@@ -54,6 +54,7 @@ def health_check(request: Request) -> Response:
             details["broker"] = {"status": "ok", "message": "in-memory (eager)"}
         else:
             from config.celery import app as celery_app
+
             with celery_app.connection() as conn:
                 conn.ensure_connection(max_retries=1)
             details["broker"] = {"status": "ok"}

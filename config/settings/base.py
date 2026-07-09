@@ -184,8 +184,8 @@ CACHES = {
             "CONNECTION_POOL_KWARGS": {
                 "max_connections": 100,
                 "retry_on_timeout": True,
-            }
-        }
+            },
+        },
     }
 }
 

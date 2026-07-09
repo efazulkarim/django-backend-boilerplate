@@ -48,7 +48,9 @@ class TestHealthChecks:
         assert data["status"] == "unhealthy"
         assert data["database"] == "disconnected"
         assert data["details"]["database"]["status"] == "error"
-        assert "offline" not in data["details"]["database"]["message"]  # No credentials/traceback leak
+        assert (
+            "offline" not in data["details"]["database"]["message"]
+        )  # No credentials/traceback leak
 
     @patch("django.core.cache.cache.set")
     @patch("config.celery.app.connection")
@@ -82,7 +84,9 @@ class TestHealthChecks:
         data = response.json()
         assert data["status"] == "unhealthy"
         assert data["details"]["broker"]["status"] == "error"
-        assert "timeout" not in data["details"]["broker"]["message"]  # No credentials/traceback leak
+        assert (
+            "timeout" not in data["details"]["broker"]["message"]
+        )  # No credentials/traceback leak
 
     @patch("django.db.backends.base.base.BaseDatabaseWrapper.cursor")
     def test_readiness_check_failure(self, mock_cursor: MagicMock) -> None:
